@@ -13,6 +13,10 @@ ft-e2e is an MCP server and a Playwright harness. You type one command in Claude
 
 ▶ **[Watch the 4-minute demo, with voice](docs/media/ft-e2e-demo.mp4)** (MP4, 9 MB). Everything in it is a real run of this repo.
 
+
+https://github.com/user-attachments/assets/dfff266f-f4b5-4fa9-93d7-c5a181e39a11
+
+
 ```
 /ft-e2e TICKET-123 demo dev
 ```
