@@ -1,0 +1,23 @@
+{
+  "name": "ft-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fintary e2e harness: Playwright specs per Linear ticket, per-run evidence, narrated recordings, device runs and API evidence for the Fintary web app and API",
+  "scripts": {
+    "test": "playwright test",
+    "auth": "node scripts/sign-in.mjs --env dev",
+    "auth:uat": "node scripts/sign-in.mjs --env uat",
+    "auth:local": "node scripts/sign-in.mjs --env local",
+    "dev:status": "bash scripts/dev-up.sh --status",
+    "dev:up": "bash scripts/dev-up.sh --up",
+    "dev:down": "bash scripts/dev-up.sh --stop",
+    "inspect": "node scripts/inspect.mjs",
+    "report": "node scripts/build-report.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0"
+  }
+}

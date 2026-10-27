@@ -1,0 +1,45 @@
+{
+  "name": "ft-e2e-mcp",
+  "version": "0.2.0",
+  "description": "MCP server + CLI that drives the Fintary e2e harness (web app + API) across environments: preflight, run, evidence, recordings, device runs and Linear publishing",
+  "main": "src/index.mjs",
+  "bin": {
+    "ft-e2e-mcp": "src/index.mjs",
+    "ft-e2e-run": "bin/ft-e2e-run.mjs"
+  },
+  "scripts": {
+    "start": "node src/index.mjs",
+    "setup": "npm install --no-audit --no-fund && npm --prefix harness install --no-audit --no-fund",
+    "test": "node test/smoke.mjs",
+    "e2e:envs": "node bin/ft-e2e-run.mjs envs",
+    "e2e:preflight": "node bin/ft-e2e-run.mjs preflight",
+    "e2e:prepare": "node bin/ft-e2e-run.mjs prepare",
+    "e2e:run": "node bin/ft-e2e-run.mjs run",
+    "e2e:report": "node bin/ft-e2e-run.mjs report",
+    "e2e:full": "node bin/ft-e2e-run.mjs full",
+    "e2e:videos": "node bin/ft-e2e-run.mjs videos",
+    "e2e:demo-video": "node bin/ft-e2e-run.mjs demo-video",
+    "e2e:api-calls": "node bin/ft-e2e-run.mjs api-calls",
+    "e2e:devices": "node bin/ft-e2e-run.mjs devices",
+    "e2e:device-report": "node bin/ft-e2e-run.mjs device-report",
+    "e2e:publish": "node bin/ft-e2e-run.mjs publish",
+    "e2e:doctor": "node bin/ft-e2e-run.mjs doctor"
+  },
+  "keywords": [
+    "fintary",
+    "e2e",
+    "playwright",
+    "mcp"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.6.5"
+  }
+}

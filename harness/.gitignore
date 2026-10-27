@@ -1,0 +1,11 @@
+node_modules/
+# Secrets and sessions: credentials files and cached Firebase sessions (storageState with IndexedDB) never leave this machine.
+.env
+.env.*
+!.env.example
+.auth/
+# Evidence and local state
+tickets/
+.dev/
+test-results/
+playwright-report/

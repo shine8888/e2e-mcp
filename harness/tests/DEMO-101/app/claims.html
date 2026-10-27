@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northstar Claims</title>
+<style>
+  :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f4f6fa; --brand:#4338ca; --brand-2:#6366f1; --ok:#15803d; --okbg:#dcfce7; --warn:#b45309; --warnbg:#fef3c7; --bad:#b91c1c; --badbg:#fee2e2; --info:#1d4ed8; --infobg:#dbeafe; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+  button, input, select, textarea { font: inherit; }
+  .top { display:flex; align-items:center; gap:16px; padding:14px 28px; background:var(--ink); color:#fff; }
+  .logo { font-weight:800; letter-spacing:-.01em; font-size:18px; display:flex; align-items:center; gap:10px; }
+  .logo i { width:26px; height:26px; border-radius:7px; background:linear-gradient(135deg,var(--brand-2),#22d3ee); display:inline-block; }
+  .top nav { display:flex; gap:6px; margin-left:24px; }
+  .top nav a { color:#cbd5e1; text-decoration:none; padding:6px 12px; border-radius:8px; }
+  .top nav a.on { background:#1e293b; color:#fff; }
+  .top .who { margin-left:auto; color:#94a3b8; font-size:14px; }
+  main { max-width:1180px; margin:0 auto; padding:28px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.01em; }
+  .sub { color:var(--muted); margin:0 0 22px; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
+  .kpi { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .kpi span { color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.06em; font-weight:600; }
+  .kpi b { display:block; font-size:30px; margin-top:4px; font-variant-numeric:tabular-nums; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; }
+  .bar { display:flex; gap:12px; align-items:end; padding:16px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .bar label { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:#334155; }
+  .bar input, .bar select { padding:9px 11px; border:1px solid #cbd5e1; border-radius:9px; min-width:220px; background:#fff; }
+  .btn { padding:10px 16px; border-radius:10px; border:1px solid transparent; background:var(--brand); color:#fff; font-weight:650; cursor:pointer; }
+  .btn.ghost { background:#fff; color:var(--ink); border-color:#cbd5e1; }
+  .btn.ok { background:var(--ok); }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .bar .btn { margin-left:auto; }
+  /* PLANTED for the device audit: the table has a fixed width and no scroll wrapper, so phones scroll sideways. */
+  table { width:100%; min-width:980px; border-collapse:collapse; }
+  th, td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#f8fafc; }
+  tbody tr { cursor:pointer; } tbody tr:hover { background:#f8fafc; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .pill { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12.5px; font-weight:650; }
+  .s-Open { background:var(--infobg); color:var(--info); } .s-In-review { background:var(--warnbg); color:var(--warn); }
+  .s-Approved { background:var(--okbg); color:var(--ok); } .s-Paid { background:#e0e7ff; color:var(--brand); } .s-Rejected { background:var(--badbg); color:var(--bad); }
+  .foot { padding:12px 18px; color:var(--muted); font-size:13px; }
+  .empty { padding:40px; text-align:center; color:var(--muted); }
+  .detail { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; }
+  .detail .card { padding:20px 22px; }
+  dl { display:grid; grid-template-columns:160px 1fr; gap:10px 16px; margin:0; } dt { color:var(--muted); } dd { margin:0; font-weight:600; }
+  .tl { list-style:none; margin:0; padding:0; } .tl li { padding:10px 0 10px 18px; border-left:2px solid var(--line); position:relative; }
+  .tl li:before { content:""; position:absolute; left:-6px; top:16px; width:10px; height:10px; border-radius:50%; background:var(--brand-2); }
+  .tl small { color:var(--muted); display:block; }
+  .actions { display:flex; gap:10px; margin-top:18px; }
+  .back { color:var(--brand); text-decoration:none; font-weight:600; display:inline-block; margin-bottom:14px; }
+  .scrim { position:fixed; inset:0; background:#0f172a80; display:flex; align-items:center; justify-content:center; }
+  [role=dialog] { background:#fff; border-radius:16px; padding:24px 26px; width:min(460px,92vw); box-shadow:0 20px 60px #0004; }
+  [role=dialog] h2 { margin:0 0 8px; font-size:20px; } [role=dialog] .actions { justify-content:flex-end; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 18px; border-radius:12px; box-shadow:0 10px 30px #0003; font-weight:600; }
+  form.grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 20px; padding:22px; }
+  form.grid label { display:flex; flex-direction:column; gap:6px; font-weight:600; font-size:14px; }
+  form.grid input, form.grid select, form.grid textarea { padding:10px 12px; border:1px solid #cbd5e1; border-radius:9px; font-weight:400; }
+  form.grid .full { grid-column:1 / -1; }
+  .err { color:var(--bad); font-size:13px; font-weight:500; min-height:18px; }
+  input[aria-invalid=true], select[aria-invalid=true] { border-color:var(--bad); background:#fff7f7; }
+  .login { min-height:100vh; display:grid; place-items:center; background:radial-gradient(900px 500px at 80% -10%,#6366f133,transparent),var(--bg); }
+  .login .card { width:min(420px,92vw); padding:30px; }
+  .login label { display:flex; flex-direction:column; gap:6px; font-weight:600; margin-top:14px; }
+  .login input { padding:11px 12px; border:1px solid #cbd5e1; border-radius:10px; font-weight:400; }
+  .login .btn { width:100%; margin-top:20px; padding:12px; }
+  .alert { margin-top:14px; padding:10px 12px; border-radius:10px; background:var(--badbg); color:var(--bad); font-weight:600; font-size:14px; }
+  .hint { color:var(--muted); font-size:13px; margin-top:14px; }
+  @media (max-width: 720px) { .kpis { grid-template-columns:1fr 1fr; } .detail { grid-template-columns:1fr; } form.grid { grid-template-columns:1fr; } .top nav { display:none; } main { padding:16px; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* Northstar Claims: a fictional claims desk used to demo the ft-e2e harness. No backend; state lives in memory. */
+const TODAY = new Date(); const iso = d => d.toISOString().slice(0, 10)
+const daysAgo = n => { const d = new Date(TODAY); d.setDate(d.getDate() - n); return iso(d) }
+const money = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+const USER = { email: 'alex@northstar.test', password: 'demo-pass', name: 'Alex Morgan' }
+const state = {
+  signedIn: false, toast: null, filter: { status: 'All', q: '' },
+  claims: [
+    ['CLM-1042', 'Maria Rivera', 'Auto', 'POL-55821', 4820, 'In review', 2],
+    ['CLM-1041', 'James Okafor', 'Home', 'POL-41207', 12950, 'Open', 3],
+    ['CLM-1040', 'Priya Natarajan', 'Travel', 'POL-77310', 860, 'Approved', 5],
+    ['CLM-1039', 'Lucas Brennan', 'Auto', 'POL-55190', 2310, 'In review', 6],
+    ['CLM-1038', 'Hana Sato', 'Home', 'POL-40981', 7400, 'Paid', 9],
+    ['CLM-1037', 'Diego Alvarez', 'Health', 'POL-90233', 1580, 'Open', 10],
+    ['CLM-1036', 'Emma Lindqvist', 'Auto', 'POL-55002', 3975, 'Rejected', 12],
+    ['CLM-1035', 'Noah Fischer', 'Travel', 'POL-77104', 640, 'In review', 13],
+    ['CLM-1034', 'Aisha Bello', 'Home', 'POL-41532', 18200, 'Open', 15],
+    ['CLM-1033', 'Tom Whitaker', 'Health', 'POL-90011', 920, 'Paid', 18],
+  ].map(([id, claimant, type, policy, amount, status, ago]) => ({ id, claimant, type, policy, amount, status, submitted: daysAgo(ago),
+    history: [{ at: daysAgo(ago), what: 'Claim submitted' }].concat(status !== 'Open' ? [{ at: daysAgo(Math.max(0, ago - 1)), what: 'Assigned to Alex Morgan' }] : [])
+  })),
+}
+const STATUSES = ['Open', 'In review', 'Approved', 'Paid', 'Rejected']
+const $ = s => document.querySelector(s)
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+const pill = s => `<span class="pill s-${s.replace(' ', '-')}">${s}</span>`
+function toast (msg) { state.toast = msg; render(); clearTimeout(toast.t); toast.t = setTimeout(() => { state.toast = null; render() }, 4000) }
+
+function shell (body, on) {
+  return `<header class="top"><div class="logo"><i></i>Northstar Claims</div>
+    <nav aria-label="Main"><a href="#/claims" class="${on === 'claims' ? 'on' : ''}">Claims</a><a href="#/claims/new" class="${on === 'new' ? 'on' : ''}">New claim</a></nav>
+    <span class="who">${USER.name}</span></header><main>${body}</main>${state.toast ? `<div class="toast" role="status">${esc(state.toast)}</div>` : ''}`
+}
+
+function viewLogin (error) {
+  return `<div class="login"><form class="card" id="login" novalidate aria-label="Sign in">
+    <div class="logo" style="color:var(--ink)"><i></i>Northstar Claims</div>
+    <h1 style="margin-top:18px">Sign in</h1><p class="sub">Claims desk for adjusters</p>
+    <label for="email">Email<input id="email" type="email" autocomplete="username" value="${esc(render.loginEmail ?? '')}"></label>
+    <label for="password">Password<input id="password" type="password" autocomplete="current-password"></label>
+    ${error ? `<div class="alert" role="alert">${esc(error)}</div>` : ''}
+    <button class="btn" type="submit">Sign in</button>
+    <p class="hint">Demo account: ${USER.email}</p></form></div>`
+}
+
+function visible () {
+  const q = state.filter.q.trim().toLowerCase()
+  return state.claims.filter(c => (state.filter.status === 'All' || c.status === state.filter.status)
+    && (!q || [c.id, c.claimant, c.policy].some(v => v.toLowerCase().includes(q))))
+}
+
+function viewList () {
+  const count = s => state.claims.filter(c => c.status === s).length
+  const paid = state.claims.filter(c => c.status === 'Paid').reduce((a, c) => a + c.amount, 0)
+  const rows = visible()
+  return shell(`<h1>Claims</h1><p class="sub">Every claim on your desk, newest first.</p>
+    <section class="kpis" aria-label="Summary">
+      <div class="kpi" aria-label="Open claims"><span>Open</span><b>${count('Open')}</b></div>
+      <div class="kpi" aria-label="Claims in review"><span>In review</span><b>${count('In review')}</b></div>
+      <div class="kpi" aria-label="Approved claims"><span>Approved</span><b>${count('Approved')}</b></div>
+      <div class="kpi" aria-label="Paid out"><span>Paid out</span><b>${money(paid)}</b></div>
+    </section>
+    <div class="card"><div class="bar">
+      <label for="status">Status<select id="status">${['All', ...STATUSES].map(s => `<option${s === state.filter.status ? ' selected' : ''}>${s}</option>`).join('')}</select></label>
+      <label for="q">Search<input id="q" type="search" placeholder="Claim, claimant or policy" value="${esc(state.filter.q)}"></label>
+      <a class="btn" href="#/claims/new" style="text-decoration:none">New claim</a></div>
+      ${rows.length ? `<table aria-label="Claims"><thead><tr><th>Claim</th><th>Claimant</th><th>Type</th><th>Policy</th><th>Submitted</th><th class="num">Amount</th><th>Status</th></tr></thead><tbody>
+        ${rows.map(c => `<tr data-id="${c.id}"><td><b>${c.id}</b></td><td>${esc(c.claimant)}</td><td>${c.type}</td><td>${c.policy}</td><td>${c.submitted}</td><td class="num">${money(c.amount)}</td><td>${pill(c.status)}</td></tr>`).join('')}
+        </tbody></table>` : '<div class="empty">No claims match these filters.</div>'}
+      <div class="foot" aria-live="polite">Showing ${rows.length} of ${state.claims.length} claims</div></div>`, 'claims')
+}
+
+function viewDetail (id, confirm) {
+  const c = state.claims.find(x => x.id === id)
+  if (!c) return shell('<p>Claim not found.</p><a class="back" href="#/claims">← Back to claims</a>', 'claims')
+  const canDecide = c.status === 'Open' || c.status === 'In review'
+  return shell(`<a class="back" href="#/claims">← Back to claims</a>
+    <h1>${c.id} · ${esc(c.claimant)}</h1><p class="sub">${c.type} claim on ${c.policy}</p>
+    <div class="detail"><section class="card" aria-label="Claim details"><dl>
+      <dt>Status</dt><dd id="claim-status">${pill(c.status)}</dd><dt>Amount</dt><dd>${money(c.amount)}</dd>
+      <dt>Submitted</dt><dd>${c.submitted}</dd><dt>Policy</dt><dd>${c.policy}</dd><dt>Adjuster</dt><dd>${USER.name}</dd></dl>
+      <div class="actions"><button class="btn ok" id="approve"${canDecide ? '' : ' disabled'}>Approve claim</button><button class="btn ghost" id="reject"${canDecide ? '' : ' disabled'}>Reject</button></div></section>
+    <section class="card" aria-label="History"><h2 style="margin:0 0 10px;font-size:17px">History</h2><ol class="tl">
+      ${c.history.map(h => `<li>${esc(h.what)}<small>${h.at}</small></li>`).join('')}</ol></section></div>
+    ${confirm ? `<div class="scrim"><div role="dialog" aria-modal="true" aria-labelledby="dlg-t"><h2 id="dlg-t">Approve ${c.id}?</h2>
+      <p>${money(c.amount)} will be released to ${esc(c.claimant)}. This can't be undone.</p>
+      <div class="actions"><button class="btn ghost" id="cancel">Cancel</button><button class="btn ok" id="confirm">Approve ${money(c.amount)}</button></div></div></div>` : ''}`, 'claims')
+}
+
+function viewNew (errors = {}, values = {}) {
+  const f = (k, label, input) => `<label for="${k}">${label}${input}<span class="err" id="${k}-err">${errors[k] ?? ''}</span></label>`
+  const inv = k => errors[k] ? ' aria-invalid="true"' : ''
+  return shell(`<a class="back" href="#/claims">← Back to claims</a><h1>New claim</h1><p class="sub">Log a claim for a policy holder.</p>
+    <form class="card grid" id="new" novalidate aria-label="New claim">
+      ${f('claimant', 'Claimant name', `<input id="claimant" value="${esc(values.claimant ?? '')}"${inv('claimant')}>`)}
+      ${f('policy', 'Policy number', `<input id="policy" placeholder="POL-00000" value="${esc(values.policy ?? '')}"${inv('policy')}>`)}
+      ${f('type', 'Claim type', `<select id="type"${inv('type')}><option value="">Choose a type</option>${['Auto', 'Home', 'Travel', 'Health'].map(t => `<option${values.type === t ? ' selected' : ''}>${t}</option>`).join('')}</select>`)}
+      ${f('amount', 'Amount (USD)', `<input id="amount" inputmode="decimal" value="${esc(values.amount ?? '')}"${inv('amount')}>`)}
+      ${f('incident', 'Incident date', `<input id="incident" type="date" value="${esc(values.incident ?? '')}"${inv('incident')}>`)}
+      <div class="full actions"><button class="btn" type="submit">Submit claim</button><a class="btn ghost" href="#/claims" style="text-decoration:none">Cancel</a></div>
+    </form>`, 'new')
+}
+
+let confirmOpen = false
+function render () {
+  const h = location.hash || '#/login'
+  if (!state.signedIn && h !== '#/login') { location.hash = '#/login'; return }
+  const app = $('#app')
+  if (h === '#/login') app.innerHTML = viewLogin(render.loginError)
+  else if (h === '#/claims') app.innerHTML = viewList()
+  else if (h === '#/claims/new') app.innerHTML = viewNew(render.formErrors, render.formValues)
+  else if (h.startsWith('#/claims/')) app.innerHTML = viewDetail(h.split('/')[2], confirmOpen)
+  bind()
+}
+
+function bind () {
+  $('#login')?.addEventListener('submit', e => {
+    e.preventDefault()
+    if ($('#email').value.trim() === USER.email && $('#password').value === USER.password) { state.signedIn = true; render.loginError = null; location.hash = '#/claims' }
+    else { render.loginError = 'Email or password is incorrect.'; render.loginEmail = $('#email').value.trim(); render() }
+  })
+  $('#status')?.addEventListener('change', e => { state.filter.status = e.target.value; render() })
+  const q = $('#q'); if (q) {
+    q.addEventListener('input', e => { state.filter.q = e.target.value; clearTimeout(bind.t); bind.t = setTimeout(() => { render(); const n = $('#q'); n.focus(); n.setSelectionRange(n.value.length, n.value.length) }, 250) })
+  }
+  document.querySelectorAll('tbody tr').forEach(tr => tr.addEventListener('click', () => { location.hash = `#/claims/${tr.dataset.id}` }))
+  $('#approve')?.addEventListener('click', () => { confirmOpen = true; render() })
+  $('#cancel')?.addEventListener('click', () => { confirmOpen = false; render() })
+  $('#confirm')?.addEventListener('click', () => {
+    const c = state.claims.find(x => x.id === location.hash.split('/')[2])
+    c.status = 'Approved'; c.history.push({ at: iso(TODAY), what: `Approved by ${USER.name}` }); confirmOpen = false
+    toast(`${c.id} approved for ${money(c.amount)}`)
+  })
+  $('#reject')?.addEventListener('click', () => {
+    const c = state.claims.find(x => x.id === location.hash.split('/')[2])
+    c.status = 'Rejected'; c.history.push({ at: iso(TODAY), what: `Rejected by ${USER.name}` }); toast(`${c.id} rejected`)
+  })
+  $('#new')?.addEventListener('submit', e => {
+    e.preventDefault()
+    const v = Object.fromEntries(['claimant', 'policy', 'type', 'amount', 'incident'].map(k => [k, $('#' + k).value.trim()]))
+    const err = {}
+    if (!v.claimant) err.claimant = 'Enter the claimant name.'
+    if (!/^POL-\d{5}$/.test(v.policy)) err.policy = 'Use the format POL-12345.'
+    if (!v.type) err.type = 'Choose a claim type.'
+    if (!(Number(v.amount) > 0)) err.amount = 'Enter an amount above 0.'
+    if (!v.incident) err.incident = 'Enter the incident date.'
+    else if (v.incident > iso(TODAY)) err.incident = "The incident date can't be in the future."
+    if (Object.keys(err).length) { render.formErrors = err; render.formValues = v; render(); return }
+    const id = `CLM-${1043 + state.claims.length - 10}`
+    state.claims.unshift({ id, claimant: v.claimant, type: v.type, policy: v.policy, amount: Number(v.amount), status: 'Open', submitted: iso(TODAY), history: [{ at: iso(TODAY), what: 'Claim submitted' }] })
+    render.formErrors = {}; render.formValues = {}; state.filter = { status: 'All', q: '' }
+    location.hash = '#/claims'; toast(`${id} created for ${v.claimant}`)
+  })
+}
+addEventListener('hashchange', () => { confirmOpen = false; render() })
+render()
+</script>
+</body>
+</html>
